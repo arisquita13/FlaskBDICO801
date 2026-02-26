@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block title %}Cinepolis - Inicio{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+    <div class="bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-yellow-400">Entradas</h2>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-gray-300 mb-2">Nombre</label>
+                <input type="text" id="nombre" placeholder="Tu nombre" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <div>
+                <label class="block text-gray-300 mb-2">Cantidad Compradores</label>
+                <input type="number" id="cantidad" min="1" max="7" value="1" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <div>
+                <label class="block text-gray-300 mb-2">Tarjeta Cineco</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="tarjeta" value="si" class="mr-2"> Sí
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="tarjeta" value="no" checked class="mr-2"> No
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex gap-4">
+            <button onclick="procesar()" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition">Procesar</button>
+            <button onclick="salir()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition">Salir</button>
+        </div>
+    </div>
+    
+    <div class="bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-yellow-400">Valor a Pagar</h2>
+        
+        <div class="space-y-4">
+            <div class="text-lg">
+                <span class="text-gray-400">Boletos:</span>
+                <span id="valor_boletos" class="float-right font-bold">$0.00</span>
+            </div>
+            <div class="border-t border-gray-700 pt-4">
+                <span class="text-lg text-gray-400">Descuento:</span>
+                <span id="descuento" class="float-right font-bold text-green-400">-$0.00</span>
+            </div>
+            <div class="border-t border-gray-700 pt-4 text-xl">
+                <span class="text-gray-300">Total:</span>
+                <span id="total" class="float-right font-bold text-yellow-400">$0.00</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="error" class="mt-6 p-4 bg-red-900 border border-red-600 rounded text-red-200 hidden"></div>
+
+<script>
+const PRECIO_BOLETO = 12;
+
+function calcularDescuento(cantidad) {
+    if (cantidad > 5) return 0.15;
+    if (cantidad >= 3) return 0.10;
+    return 0.0;
+}
+
+function actualizar() {
+    const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
+    const tarjeta = document.querySelector('input[name="tarjeta"]:checked').value === 'si';
+    const errorDiv = document.getElementById('error');
+    
+    if (cantidad < 1 || cantidad > 7) {
+        errorDiv.textContent = 'Cantidad inválida (1-7)';
+        errorDiv.classList.remove('hidden');
+        document.getElementById('valor_boletos').textContent = '$0.00';
+        document.getElementById('descuento').textContent = '-$0.00';
+        document.getElementById('total').textContent = '$0.00';
+        return;
+    }
+    
+    errorDiv.classList.add('hidden');
+    
+    const subtotal = cantidad * PRECIO_BOLETO;
+    const descuentoPorcentaje = calcularDescuento(cantidad);
+    let descuento = subtotal * descuentoPorcentaje;
+    
+    let total = subtotal - descuento;
+    if (tarjeta) {
+        total *= 0.9;
+    }
+    
+    document.getElementById('valor_boletos').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('descuento').textContent = '-$' + descuento.toFixed(2);
+    document.getElementById('total').textContent = '$' + total.toFixed(2);
+}
+
+function procesar() {
+    const nombre = document.getElementById('nombre').value;
+    const cantidad = parseInt(document.getElementById('cantidad').value);
+    
+    if (!nombre.trim()) {
+        alert('Ingresa tu nombre');
+        return;
+    }
+    
+    if (cantidad < 1 || cantidad > 7) {
+        alert('Cantidad inválida (1-7)');
+        return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/procesar';
+    
+    form.innerHTML = `
+        <input type="hidden" name="nombre" value="${nombre}">
+        <input type="hidden" name="cantidad" value="${cantidad}">
+        <input type="hidden" name="tarjeta_cineco" value="${document.querySelector('input[name="tarjeta"]:checked').value}">
+    `;
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function salir() {
+    if (confirm('¿Estás seguro de que deseas salir?')) {
+        window.location.href = '/';
+    }
+}
+
+document.getElementById('cantidad').addEventListener('input', actualizar);
+document.querySelectorAll('input[name="tarjeta"]').forEach(radio => {
+    radio.addEventListener('change', actualizar);
+});
+
+actualizar();
+</script>
+{% endblock %}

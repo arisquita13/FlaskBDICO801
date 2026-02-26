@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}Cinepolis - Procesar{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+    <div class="bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-yellow-400">Entradas</h2>
+        
+        <form method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-300 mb-2">Nombre</label>
+                {{ form.nombre(class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-yellow-500") }}
+            </div>
+            
+            <div>
+                <label class="block text-gray-300 mb-2">Cantidad Compradores</label>
+                {{ form.cantidad(min="1", max="7", class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white focus:outline-none focus:border-yellow-500") }}
+            </div>
+            
+            <div>
+                <label class="block text-gray-300 mb-2">Tarjeta Cineco</label>
+                <div class="flex gap-4">
+                    {% for subfield in form.tarjeta_cineco %}
+                        <label class="flex items-center text-gray-300">
+                            {{ subfield() }} {{ subfield.label.text }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition">Procesar</button>
+                <a href="/" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition text-center">Salir</a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-yellow-400">Valor a Pagar</h2>
+        
+        {% if error %}
+            <div class="bg-red-900 border border-red-600 rounded p-4 mb-6 text-red-200">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if resultado %}
+            <div class="space-y-4 bg-gray-700 p-4 rounded mb-6">
+                <p><span class="text-gray-400">Cliente:</span> <span class="float-right font-bold">{{ resultado.nombre }}</span></p>
+                <p><span class="text-gray-400">Boletos:</span> <span class="float-right font-bold">{{ resultado.cantidad }}</span></p>
+                <p><span class="text-gray-400">Subtotal:</span> <span class="float-right font-bold">${{ "%.2f"|format(resultado.subtotal) }}</span></p>
+                <p><span class="text-gray-400">Descuento:</span> <span class="float-right font-bold text-green-400">-{{ resultado.descuento_porc }}%</span></p>
+                {% if resultado.tiene_cineco %}
+                    <p><span class="text-gray-400">Desc. Cineco:</span> <span class="float-right font-bold text-green-400">-10%</span></p>
+                {% endif %}
+                <p class="border-t border-gray-600 pt-4 text-xl"><span class="text-gray-300">Total:</span> <span class="float-right font-bold text-yellow-400">${{ "%.2f"|format(resultado.total) }}</span></p>
+            </div>
+        {% else %}
+            <div class="space-y-4">
+                <div class="text-lg">
+                    <span class="text-gray-400">Boletos:</span>
+                    <span class="float-right font-bold">$0.00</span>
+                </div>
+                <div class="border-t border-gray-700 pt-4">
+                    <span class="text-lg text-gray-400">Descuento:</span>
+                    <span class="float-right font-bold text-green-400">-$0.00</span>
+                </div>
+                <div class="border-t border-gray-700 pt-4 text-xl">
+                    <span class="text-gray-300">Total:</span>
+                    <span class="float-right font-bold text-yellow-400">$0.00</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
