@@ -1,4 +1,4 @@
-blinker==1.9.0
+.\venv\Scripts\Activate.ps1blinker==1.9.0
 click==8.3.1
 colorama==0.4.6
 dnspython==2.8.0
