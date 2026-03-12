@@ -70,13 +70,33 @@ macros %}
 </div>
 
 <div class="py-32 relative overflow-x-auto sm:rounded-lg">
-    <h1 class="text-2xl font-bold"></h1>Matricula: {{mat}}</h1>
-    <h1 class="text-2xl font-bold">Nombre: {{nom}}</h1>
-    <h1 class="text-2xl font-bold">Apellido Paterno: {{apa}}</h1>
-    <h1 class="text-2xl font-bold">Apellido Materno: {{ama}}</h1>
-    <h1 class="text-2xl font-bold">Edad: {{edad}}</h1>
-    <h1 class="text-2xl font-bold">Correo: {{email}}</h1>
-
+    <h2 class="text-2xl font-bold mb-5">Alumnos Registrados</h2>
+    {% if alumnos %}
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Nombre</th>
+                <th scope="col" class="px-6 py-3">Apaterno</th>
+                <th scope="col" class="px-6 py-3">Amaterno</th>
+                <th scope="col" class="px-6 py-3">Edad</th>
+                <th scope="col" class="px-6 py-3">Correo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alumno in alumnos %}
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td class="px-6 py-4">{{ alumno.nombre }}</td>
+                <td class="px-6 py-4">{{ alumno.apaterno }}</td>
+                <td class="px-6 py-4">{{ alumno.amaterno }}</td>
+                <td class="px-6 py-4">{{ alumno.edad }}</td>
+                <td class="px-6 py-4">{{ alumno.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-500">No hay alumnos registrados aún.</p>
+    {% endif %}
 </div>
 
 

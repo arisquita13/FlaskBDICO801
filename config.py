@@ -9,5 +9,5 @@ class Config(object):
     
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI ='mysql+pymysql://ariadna:root@3306/ICO801'
+    SQLALCHEMY_DATABASE_URI ='mysql+pymysql://:Ariadna:root@localhost:3306/ico801'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
